@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using PhotoAlbum.Models;
+using PhotoAlbum.Services.DialogServices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +19,7 @@ namespace PhotoAlbum.ViewModels
         private Photo currentPhoto;
         private Location currentLocation;
         #endregion
-        
+
         public ObservableCollection<Location> Locations { get; set; }
 
         public Photo CurrentPhoto
@@ -40,20 +41,52 @@ namespace PhotoAlbum.ViewModels
             }
         }
 
+        IDialogService dialogService;
+
         public ICommand CommandChangeLocation { get; set; }
         public ICommand CommandNextPhoto { get; set; }
         public ICommand CommandPrevPhoto { get; set; }
+        public ICommand CommandAddLocation { get; set; }
+        public ICommand CommandRemoveLocation { get; set; }
 
         void InitCommands()
         {
             CommandChangeLocation = new RelayCommand(ChangeLocation);
             CommandNextPhoto = new RelayCommand(SelectNextPhoto);
             CommandPrevPhoto = new RelayCommand(SelectPrevPhoto);
+            CommandAddLocation = new RelayCommand(AddLocation);
+            CommandRemoveLocation = new RelayCommand(RemoveLocation, RemoveLocationCanExecute);
         }
 
-        public AppViewModel()
+        private bool RemoveLocationCanExecute()
+        {
+            return Locations.Count > 0;
+        }
+
+        private void RemoveLocation()
+        {
+            var res = dialogService.MessageBoxYesNo("Are you sure you want to delete the selected location?", "Photo album");
+            if (res == DialogResult.Yes)
+            {
+                Locations.Remove(CurrentLocation);
+
+                if (Locations.Count > 0)
+                {
+                    CurrentLocation = Locations[Locations.Count - 1];
+                }
+            }
+        }
+
+        private void AddLocation()
+        {
+            Locations.Add(new Location());
+        }
+
+        public AppViewModel(IDialogService dialogService)
         {
             InitCommands();
+
+            this.dialogService = dialogService;
 
             Locations = PhotoStorage.GetLocations();
 
@@ -63,7 +96,14 @@ namespace PhotoAlbum.ViewModels
 
         void ChangeLocation()
         {
-            CurrentPhoto = CurrentLocation.Photos[0];
+            if (CurrentLocation?.Photos?.Count > 0)
+            {
+                CurrentPhoto = CurrentLocation.Photos[0];
+            }
+            else
+            {
+                CurrentPhoto.Path = "";
+            }
         }
 
         private void SelectPrevPhoto()

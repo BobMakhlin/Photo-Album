@@ -13,7 +13,7 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding Path=Locations}" SelectedItem="{Binding Path=CurrentLocation}">
+        <ListBox Height="355" VerticalAlignment="Top" Margin="0,5,0,0" ItemsSource="{Binding Path=Locations}" SelectedItem="{Binding Path=CurrentLocation}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -30,6 +30,11 @@
             </b:Interaction.Triggers>
 
         </ListBox>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,5">
+            <Button FontSize="18" Width="40" Height="40" Margin="0,0,5,0" Command="{Binding CommandAddLocation}">+</Button>
+            <Button FontSize="18" Width="40" Height="40" Command="{Binding CommandRemoveLocation}">-</Button>
+        </StackPanel>        
 
         <StackPanel Orientation="Horizontal" Grid.Column="1">
             <Image Margin="5,0,0,0" Source="/Resources/png/prev.png" Height="70" Width="70">

@@ -12,7 +12,7 @@ namespace PhotoAlbum.Models
     class Location : INotifyPropertyChanged
     {
         #region Private Definitions
-        private string name;
+        private string name = "Unknown";
         private DateTime date;
         #endregion
 
@@ -34,7 +34,7 @@ namespace PhotoAlbum.Models
                 INotifyPropertyChanged();
             }
         }
-        public ObservableCollection<Photo> Photos { get; set; }
+        public ObservableCollection<Photo> Photos { get; set; } = new ObservableCollection<Photo>();
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

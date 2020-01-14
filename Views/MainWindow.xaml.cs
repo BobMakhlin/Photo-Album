@@ -1,4 +1,5 @@
-﻿using PhotoAlbum.ViewModels;
+﻿using PhotoAlbum.Services.DialogServices;
+using PhotoAlbum.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace PhotoAlbum
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new AppViewModel();
+            DataContext = new AppViewModel(new DialogService());
         }
     }
 }
