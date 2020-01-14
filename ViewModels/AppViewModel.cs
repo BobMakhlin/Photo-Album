@@ -18,19 +18,7 @@ namespace PhotoAlbum.ViewModels
         private Photo currentPhoto;
         private Location currentLocation;
         #endregion
-
-        public AppViewModel()
-        {
-            InitCommands();
-
-            Locations = PhotoStorage.GetLocations();
-
-            CurrentLocation = Locations[0];
-            CurrentPhoto = CurrentLocation.Photos[0];
-        }
-
-        public ICommand CommandChangeLocation { get; set; }
-
+        
         public ObservableCollection<Location> Locations { get; set; }
 
         public Photo CurrentPhoto
@@ -43,7 +31,7 @@ namespace PhotoAlbum.ViewModels
             }
         }
         public Location CurrentLocation
-        { 
+        {
             get => currentLocation;
             set
             {
@@ -52,14 +40,64 @@ namespace PhotoAlbum.ViewModels
             }
         }
 
+        public ICommand CommandChangeLocation { get; set; }
+        public ICommand CommandNextPhoto { get; set; }
+        public ICommand CommandPrevPhoto { get; set; }
+
+        void InitCommands()
+        {
+            CommandChangeLocation = new RelayCommand(ChangeLocation);
+            CommandNextPhoto = new RelayCommand(SelectNextPhoto);
+            CommandPrevPhoto = new RelayCommand(SelectPrevPhoto);
+        }
+
+        public AppViewModel()
+        {
+            InitCommands();
+
+            Locations = PhotoStorage.GetLocations();
+
+            CurrentLocation = Locations[0];
+            CurrentPhoto = CurrentLocation.Photos[0];
+        }
+
         void ChangeLocation()
         {
             CurrentPhoto = CurrentLocation.Photos[0];
         }
 
-        void InitCommands()
+        private void SelectPrevPhoto()
         {
-            CommandChangeLocation = new RelayCommand(ChangeLocation);
+            int pos = CurrentLocation.Photos.IndexOf(CurrentPhoto);
+
+            if (pos != -1)
+            {
+                if (pos > 0)
+                {
+                    CurrentPhoto = CurrentLocation.Photos[pos - 1];
+                }
+                else
+                {
+                    CurrentPhoto = CurrentLocation.Photos[CurrentLocation.Photos.Count - 1];
+                }
+            }
+        }
+
+        private void SelectNextPhoto()
+        {
+            int pos = CurrentLocation.Photos.IndexOf(CurrentPhoto);
+
+            if (pos != -1)
+            {
+                if (pos < CurrentLocation.Photos.Count - 1)
+                {
+                    CurrentPhoto = CurrentLocation.Photos[pos + 1];
+                }
+                else
+                {
+                    CurrentPhoto = CurrentLocation.Photos[0];
+                }
+            }
         }
 
         #region INotifyPropertyChanged
