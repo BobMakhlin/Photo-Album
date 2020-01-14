@@ -8,6 +8,13 @@
         xmlns:dd="urn:gong-wpf-dragdrop"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="808">
+
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Closing">
+            <b:InvokeCommandAction Command="{Binding Path=CommandProgramClosing}"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -29,7 +36,6 @@
                     <b:InvokeCommandAction Command="{Binding Path=CommandChangeLocation}"/>
                 </b:EventTrigger>
             </b:Interaction.Triggers>
-
         </ListBox>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,5">
@@ -37,7 +43,7 @@
             <Button FontSize="18" Width="40" Height="40" Command="{Binding CommandRemoveLocation}">-</Button>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="1">
+        <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Top" Margin="0,5,0,0">
             <Image Margin="5,0,0,0" Source="/Resources/png/prev.png" Height="70" Width="70">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="MouseDown">
@@ -45,7 +51,7 @@
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </Image>
-            <Border Margin="5,0,0,0" Height="375" Width="500" BorderThickness="3" BorderBrush="DarkGray">
+            <Border Margin="5,0,0,0" Height="390" Width="500" BorderThickness="3" BorderBrush="DarkGray">
                 <Image Source="{Binding Path=CurrentPhoto.Path}" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding Path=ImageDropHandler}"/>
             </Border>
             <Image Margin="5,0,0,0" Source="/Resources/png/next.png" Height="70" Width="70">

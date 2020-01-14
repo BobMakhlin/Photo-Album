@@ -14,7 +14,7 @@ namespace PhotoAlbum.Helpers
         {
             var filename = Path.GetFileNameWithoutExtension(file);
             var extension = Path.GetExtension(file);
-            var resultFile = $"{AppFiles.CustomImages}\\{filename}-{Guid.NewGuid()}{extension}";
+            var resultFile = $"{AppFiles.CustomImagesPath}\\{filename}-{Guid.NewGuid()}{extension}";
             File.Copy(file, resultFile);
 
             return resultFile;

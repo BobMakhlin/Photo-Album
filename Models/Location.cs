@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace PhotoAlbum.Models
 {
+    [Serializable]
     class Location : INotifyPropertyChanged
     {
         #region Private Definitions
@@ -16,17 +17,17 @@ namespace PhotoAlbum.Models
         private DateTime date;
         #endregion
 
-        public string Name 
-        { 
-            get => name; 
+        public string Name
+        {
+            get => name;
             set
             {
                 name = value;
                 INotifyPropertyChanged();
             }
         }
-        public DateTime Date 
-        { 
+        public DateTime Date
+        {
             get => date;
             set
             {
@@ -37,6 +38,7 @@ namespace PhotoAlbum.Models
         public ObservableCollection<Photo> Photos { get; set; } = new ObservableCollection<Photo>();
 
         #region INotifyPropertyChanged
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         void INotifyPropertyChanged([CallerMemberName] string prop = "")

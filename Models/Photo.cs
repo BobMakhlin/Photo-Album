@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace PhotoAlbum.Models
 {
+    [Serializable]
     class Photo : INotifyPropertyChanged
     {
         #region Private Definitions
@@ -26,6 +27,7 @@ namespace PhotoAlbum.Models
         }
 
         #region INotifyPropertyChanged
+        [field:NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         void INotifyPropertyChanged([CallerMemberName] string prop = "")

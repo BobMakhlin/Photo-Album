@@ -8,7 +8,8 @@ namespace PhotoAlbum.AppData
 {
     static class AppFiles
     {
-        public static string StandartImages => "Images\\Standart";
-        public static string CustomImages => "Images\\Custom";
+        public static string StandartImagesPath => "Images\\Standart";
+        public static string CustomImagesPath => "Images\\Custom";
+        public static string ImagesPath => "images.bin";
     }
 }

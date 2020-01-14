@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GongSolutions.Wpf.DragDrop;
+using PhotoAlbum.AppData;
 using PhotoAlbum.DropHandlers;
 using PhotoAlbum.Models;
 using PhotoAlbum.Services.DialogServices;
@@ -52,6 +53,7 @@ namespace PhotoAlbum.ViewModels
         public ICommand CommandPrevPhoto { get; private set; }
         public ICommand CommandAddLocation { get; private set; }
         public ICommand CommandRemoveLocation { get; private set; }
+        public ICommand CommandProgramClosing { get; private set; }
 
         void InitCommands()
         {
@@ -60,6 +62,12 @@ namespace PhotoAlbum.ViewModels
             CommandPrevPhoto = new RelayCommand(SelectPrevPhoto);
             CommandAddLocation = new RelayCommand(AddLocation);
             CommandRemoveLocation = new RelayCommand(RemoveLocation, RemoveLocationCanExecute);
+            CommandProgramClosing = new RelayCommand(OnProgramClosing);
+        }
+
+        private void OnProgramClosing()
+        {
+            AppDataManager.SaveLocations(AppFiles.ImagesPath, Locations);
         }
 
         public AppViewModel(IDialogService dialogService)
@@ -69,10 +77,21 @@ namespace PhotoAlbum.ViewModels
 
             this.dialogService = dialogService;
 
-            Locations = PhotoStorage.GetLocations();
+            try
+            {
+                Locations = AppDataManager.LoadLocations(AppFiles.ImagesPath);
+            }
+            catch (Exception)
+            {
+                Locations = PhotoStorage.GetLocations();
+            }
 
-            CurrentLocation = Locations[0];
-            CurrentPhoto = CurrentLocation.Photos[0];
+            try
+            {
+                CurrentLocation = Locations[0];
+                CurrentPhoto = CurrentLocation.Photos[0];
+            }
+            catch (Exception) { }
         }
 
         private bool RemoveLocationCanExecute()
