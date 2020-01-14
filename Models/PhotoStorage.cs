@@ -20,7 +20,7 @@ namespace PhotoAlbum.Models
                     Date = new DateTime(2019, 08, 20),
                     Photos = new ObservableCollection<Photo>()
                     {
-                        new Photo() { Path=$"{AppFiles.StandartImages}\\california1.jpg" },
+                        new Photo() { Path=$"{AppFiles.StandartImages}\\california1.jfif" },
                         new Photo() { Path=$"{AppFiles.StandartImages}\\california2.jfif" },
                         new Photo() { Path=$"{AppFiles.StandartImages}\\california3.jfif" },
                         new Photo() { Path=$"{AppFiles.StandartImages}\\california4.jfif" }
