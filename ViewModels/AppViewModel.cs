@@ -1,4 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using GongSolutions.Wpf.DragDrop;
+using PhotoAlbum.DropHandlers;
 using PhotoAlbum.Models;
 using PhotoAlbum.Services.DialogServices;
 using System;
@@ -41,13 +43,15 @@ namespace PhotoAlbum.ViewModels
             }
         }
 
+        public IDropTarget ImageDropHandler { get; private set; }
+         
         IDialogService dialogService;
 
-        public ICommand CommandChangeLocation { get; set; }
-        public ICommand CommandNextPhoto { get; set; }
-        public ICommand CommandPrevPhoto { get; set; }
-        public ICommand CommandAddLocation { get; set; }
-        public ICommand CommandRemoveLocation { get; set; }
+        public ICommand CommandChangeLocation { get; private set; }
+        public ICommand CommandNextPhoto { get; private set; }
+        public ICommand CommandPrevPhoto { get; private set; }
+        public ICommand CommandAddLocation { get; private set; }
+        public ICommand CommandRemoveLocation { get; private set; }
 
         void InitCommands()
         {
@@ -56,6 +60,19 @@ namespace PhotoAlbum.ViewModels
             CommandPrevPhoto = new RelayCommand(SelectPrevPhoto);
             CommandAddLocation = new RelayCommand(AddLocation);
             CommandRemoveLocation = new RelayCommand(RemoveLocation, RemoveLocationCanExecute);
+        }
+
+        public AppViewModel(IDialogService dialogService)
+        {
+            InitCommands();
+            ImageDropHandler = new ImageDropHandler(this);
+
+            this.dialogService = dialogService;
+
+            Locations = PhotoStorage.GetLocations();
+
+            CurrentLocation = Locations[0];
+            CurrentPhoto = CurrentLocation.Photos[0];
         }
 
         private bool RemoveLocationCanExecute()
@@ -70,28 +87,13 @@ namespace PhotoAlbum.ViewModels
             {
                 Locations.Remove(CurrentLocation);
 
-                if (Locations.Count > 0)
-                {
-                    CurrentLocation = Locations[Locations.Count - 1];
-                }
+                SelectLastPhoto();
             }
         }
 
         private void AddLocation()
         {
             Locations.Add(new Location());
-        }
-
-        public AppViewModel(IDialogService dialogService)
-        {
-            InitCommands();
-
-            this.dialogService = dialogService;
-
-            Locations = PhotoStorage.GetLocations();
-
-            CurrentLocation = Locations[0];
-            CurrentPhoto = CurrentLocation.Photos[0];
         }
 
         void ChangeLocation()
@@ -137,6 +139,14 @@ namespace PhotoAlbum.ViewModels
                 {
                     CurrentPhoto = CurrentLocation.Photos[0];
                 }
+            }
+        }
+
+        public void SelectLastPhoto()
+        {
+            if (Locations.Count > 0)
+            {
+                CurrentPhoto = CurrentLocation.Photos[Locations.Count - 1];
             }
         }
 
