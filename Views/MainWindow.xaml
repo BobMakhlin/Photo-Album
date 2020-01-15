@@ -7,27 +7,37 @@
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:dd="urn:gong-wpf-dragdrop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="808">
+        Title="MainWindow" Height="450" Width="821">
 
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Closing">
             <b:InvokeCommandAction Command="{Binding Path=CommandProgramClosing}"/>
         </b:EventTrigger>
+
+        <b:KeyTrigger Key="Delete">
+            <b:InvokeCommandAction Command="{Binding Path=CommandRemoveLocation}"/>
+        </b:KeyTrigger>
     </b:Interaction.Triggers>
     
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="4.5*"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox Height="355" VerticalAlignment="Top" Margin="0,5,0,0" ItemsSource="{Binding Path=Locations}" SelectedItem="{Binding Path=CurrentLocation}">
+        <ListBox HorizontalContentAlignment="Stretch" Height="355" VerticalAlignment="Top" Margin="0,5,0,0" ItemsSource="{Binding Path=Locations}" SelectedItem="{Binding Path=CurrentLocation}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <Label FontSize="18" Content="{Binding Path=Name}"/>
-                        <Label FontSize="18" Content="{Binding Path=Date, StringFormat=dd.MM.yyyy}"/>
-                    </StackPanel>
+                    <Grid HorizontalAlignment="Stretch">
+                        <StackPanel>
+                            <Label FontSize="18" Content="{Binding Path=Name}"/>
+                            <Label FontSize="18" Content="{Binding Path=Date, StringFormat=dd.MM.yyyy}"/>
+                        </StackPanel>
+
+                        <Expander HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,0,0">
+                            <Button FontSize="18" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}, Path=DataContext.CommandEditLocation}" CommandParameter="{Binding}">Edit</Button>
+                        </Expander>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -45,8 +55,8 @@
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </Image>
-            <Border Margin="5,0,0,0" Height="390" Width="500" BorderThickness="3" BorderBrush="DarkGray">
-                <Image Source="{Binding Path=CurrentPhoto.Path}" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding Path=ImageDropHandler}"/>
+            <Border Background="White" Margin="5,0,0,0" Height="390" Width="500" BorderThickness="3" BorderBrush="DarkGray" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding Path=ImageDropHandler}">
+                <Image Source="{Binding Path=CurrentPhoto.Path}"/>
             </Border>
             <Image Margin="5,0,0,0" Source="/Resources/png/next.png" Height="70" Width="70">
                 <b:Interaction.Triggers>
