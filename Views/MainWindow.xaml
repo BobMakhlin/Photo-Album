@@ -30,12 +30,6 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-
-            <b:Interaction.Triggers>
-                <b:EventTrigger EventName="SelectionChanged">
-                    <b:InvokeCommandAction Command="{Binding Path=CommandChangeLocation}"/>
-                </b:EventTrigger>
-            </b:Interaction.Triggers>
         </ListBox>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,5">
