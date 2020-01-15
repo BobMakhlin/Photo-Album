@@ -18,7 +18,7 @@
             <b:InvokeCommandAction Command="{Binding Path=CommandRemoveLocation}"/>
         </b:KeyTrigger>
     </b:Interaction.Triggers>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -56,7 +56,13 @@
                 </b:Interaction.Triggers>
             </Image>
             <Border Background="White" Margin="5,0,0,0" Height="390" Width="500" BorderThickness="3" BorderBrush="DarkGray" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding Path=ImageDropHandler}">
-                <Image Source="{Binding Path=CurrentPhoto.Path}"/>
+                <Grid>
+                    <Image Source="{Binding Path=CurrentPhoto.Path}"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                        <Button Width="38" Height="38" Command="{Binding Path=CommandAddPhoto}">Open</Button>
+                        <Button Width="38" Height="38" Margin="5,0,0,0" Command="{Binding Path=CommandRemovePhoto}">Delete</Button>
+                    </StackPanel>
+                </Grid>
             </Border>
             <Image Margin="5,0,0,0" Source="/Resources/png/next.png" Height="70" Width="70">
                 <b:Interaction.Triggers>

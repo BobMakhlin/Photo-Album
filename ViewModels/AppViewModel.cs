@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using GongSolutions.Wpf.DragDrop;
 using PhotoAlbum.AppData;
 using PhotoAlbum.DropHandlers;
+using PhotoAlbum.Helpers;
 using PhotoAlbum.Models;
 using PhotoAlbum.Services.DialogServices;
 using PhotoAlbum.Services.WindowService.LocationWindowService;
@@ -81,6 +82,8 @@ namespace PhotoAlbum.ViewModels
         public ICommand CommandRemoveLocation { get; private set; }
         public ICommand CommandProgramClosing { get; private set; }
         public ICommand CommandEditLocation { get; private set; }
+        public ICommand CommandAddPhoto { get; private set; }
+        public ICommand CommandRemovePhoto { get; private set; }
 
         void InitCommands()
         {
@@ -90,6 +93,8 @@ namespace PhotoAlbum.ViewModels
             CommandRemoveLocation = new RelayCommand(RemoveLocation, RemoveLocationCanExecute);
             CommandProgramClosing = new RelayCommand(OnProgramClosing);
             CommandEditLocation = new RelayCommand<Location>(EditLocation);
+            CommandAddPhoto = new RelayCommand(LoadPhoto);
+            CommandRemovePhoto = new RelayCommand(RemoveSelectedPhoto, RemoveSelectedPhotoCanExecute);
         }
 
         private void OnProgramClosing()
@@ -168,9 +173,13 @@ namespace PhotoAlbum.ViewModels
 
         public void SelectLastPhoto()
         {
-            if (Locations.Count > 0)
+            if (CurrentLocation.Photos.Count > 0)
             {
-                CurrentPhoto = CurrentLocation.Photos[Locations.Count - 1];
+                CurrentPhoto = CurrentLocation.Photos[CurrentLocation.Photos.Count - 1];
+            }
+            else
+            {
+                CurrentPhoto = new Photo();
             }
         }
 
@@ -186,6 +195,32 @@ namespace PhotoAlbum.ViewModels
         {
             editLocationWindow.Location = location;
             editLocationWindow.ShowDialog();
+        }
+
+        private void LoadPhoto()
+        {
+            if (dialogService.OpenFileDialog() == true)
+            {
+                var filename = Helper.CopyToImageDir(dialogService.File);
+                CurrentLocation.Photos.Add(new Photo { Path = filename });
+
+                SelectLastPhoto();
+            }
+        }
+
+        private void RemoveSelectedPhoto()
+        {
+            var res = dialogService.MessageBoxYesNo("Are you sure you want to delete this photo?", "Photo album");
+            if (res == DialogResult.Yes)
+            {
+                CurrentLocation.Photos.Remove(CurrentPhoto);
+                SelectLastPhoto();
+            }
+        }
+
+        private bool RemoveSelectedPhotoCanExecute()
+        {
+            return CurrentLocation.Photos.Count > 0;
         }
 
         #region INotifyPropertyChanged

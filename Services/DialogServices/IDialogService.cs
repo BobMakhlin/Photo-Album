@@ -9,5 +9,7 @@ namespace PhotoAlbum.Services.DialogServices
     interface IDialogService
     {
         DialogResult MessageBoxYesNo(string msg, string caption);
+        string File { get; set; }
+        bool OpenFileDialog();
     }
 }
