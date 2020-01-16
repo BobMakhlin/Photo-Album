@@ -17,21 +17,26 @@ using System.Windows.Markup;
 
 namespace PhotoAlbum.ViewModels
 {
-    class ParametersWindowViewModel : INotifyPropertyChanged
+    class ParametersWindowViewModel
     {
-        #region Private Definitions
-        #endregion
-
         public ParametersWindowViewModel()
         {
+            InitCommands();
+            SelectedCulture = App.Language;
         }
 
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        void INotifyPropertyChanged([CallerMemberName] string prop = "")
+        public CultureInfo SelectedCulture { get; set; }
+        public ICommand CommandChangeLanguage { get; private set; }
+
+        void InitCommands()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+            CommandChangeLanguage = new RelayCommand<IClosable>(ChangeLanguage);
         }
-        #endregion
+
+        private void ChangeLanguage(IClosable window)
+        {
+            App.Language = SelectedCulture;
+            window.Close();
+        }
     }
 }

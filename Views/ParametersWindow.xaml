@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PhotoAlbum.Views"
+        xmlns:pa="clr-namespace:PhotoAlbum"
         mc:Ignorable="d"
         Title="ParametersWindow" Height="250" Width="450" Name="wnd">
 
     <Grid>
         <TabControl>
-            <TabItem Header="Language">
+            <TabItem Header="{DynamicResource Language}">
                 <StackPanel VerticalAlignment="Center">
-                    <ComboBox HorizontalContentAlignment="Stretch" Height="25" Width="150" Margin="5"/>
+                    <ComboBox ItemsSource="{x:Static pa:App.Languages}" DisplayMemberPath="DisplayName" SelectedItem="{Binding Path=SelectedCulture}" HorizontalContentAlignment="Stretch" Height="25" Width="150" Margin="5"/>
                     <Button FontSize="16" Height="25" Width="40" Margin="0,0,0,5" Command="{Binding Path=CommandChangeLanguage}" CommandParameter="{Binding ElementName=wnd}">OK</Button>
                 </StackPanel>
             </TabItem>
