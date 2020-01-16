@@ -3,8 +3,10 @@ using GalaSoft.MvvmLight.Command;
 using GongSolutions.Wpf.DragDrop;
 using PhotoAlbum.AppData;
 using PhotoAlbum.DropHandlers;
+using PhotoAlbum.Helpers;
 using PhotoAlbum.Models;
 using PhotoAlbum.Services.DialogServices;
+using PhotoAlbum.Services.WindowService.LocationWindowService;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,10 +24,37 @@ namespace PhotoAlbum.ViewModels
         #region Private Definitions
         private Photo currentPhoto;
         private Location currentLocation;
+        IDialogService dialogService;
+        ILocationWindowService editLocationWindow;
         #endregion
 
-        public ObservableCollection<Location> Locations { get; set; }
+        public AppViewModel(IDialogService dialogService, ILocationWindowService locationWindow)
+        {
+            InitCommands();
+            this.dialogService = dialogService;
+            editLocationWindow = locationWindow;
+            ImageDropHandler = new ImageDropHandler(this);
 
+            LocationChanged += OnLocationChanged;
+
+            try
+            {
+                Locations = AppDataManager.LoadLocations(AppFiles.ImagesPath);
+            }
+            catch (Exception)
+            {
+                Locations = PhotoStorage.GetLocations();
+            }
+
+            if (Locations.Count > 0)
+            {
+                CurrentLocation = Locations[0];
+            }
+        }
+
+        event EventHandler LocationChanged;
+
+        public ObservableCollection<Location> Locations { get; set; }
         public Photo CurrentPhoto
         {
             get => currentPhoto;
@@ -45,19 +74,16 @@ namespace PhotoAlbum.ViewModels
                 LocationChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
         public IDropTarget ImageDropHandler { get; private set; }
-
-        IDialogService dialogService;
-
         public ICommand CommandChangeLocation { get; private set; }
         public ICommand CommandNextPhoto { get; private set; }
         public ICommand CommandPrevPhoto { get; private set; }
         public ICommand CommandAddLocation { get; private set; }
         public ICommand CommandRemoveLocation { get; private set; }
         public ICommand CommandProgramClosing { get; private set; }
-
-        event EventHandler LocationChanged;
+        public ICommand CommandEditLocation { get; private set; }
+        public ICommand CommandAddPhoto { get; private set; }
+        public ICommand CommandRemovePhoto { get; private set; }
 
         void InitCommands()
         {
@@ -66,36 +92,14 @@ namespace PhotoAlbum.ViewModels
             CommandAddLocation = new RelayCommand(AddLocation);
             CommandRemoveLocation = new RelayCommand(RemoveLocation, RemoveLocationCanExecute);
             CommandProgramClosing = new RelayCommand(OnProgramClosing);
+            CommandEditLocation = new RelayCommand<Location>(EditLocation);
+            CommandAddPhoto = new RelayCommand(LoadPhoto);
+            CommandRemovePhoto = new RelayCommand(RemoveSelectedPhoto, RemoveSelectedPhotoCanExecute);
         }
 
         private void OnProgramClosing()
         {
             AppDataManager.SaveLocations(AppFiles.ImagesPath, Locations);
-        }
-
-        public AppViewModel(IDialogService dialogService)
-        {
-            InitCommands();
-            ImageDropHandler = new ImageDropHandler(this);
-
-            this.dialogService = dialogService;
-
-            LocationChanged += OnLocationChanged;
-
-            try
-            {
-                Locations = AppDataManager.LoadLocations(AppFiles.ImagesPath);
-            }
-            catch (Exception)
-            {
-                Locations = PhotoStorage.GetLocations();
-            }
-
-            try
-            {
-                CurrentLocation = Locations[0];
-            }
-            catch (Exception) { }
         }
 
         private void OnLocationChanged(object sender, EventArgs e)
@@ -169,9 +173,13 @@ namespace PhotoAlbum.ViewModels
 
         public void SelectLastPhoto()
         {
-            if (Locations.Count > 0)
+            if (CurrentLocation.Photos.Count > 0)
             {
-                CurrentPhoto = CurrentLocation.Photos[Locations.Count - 1];
+                CurrentPhoto = CurrentLocation.Photos[CurrentLocation.Photos.Count - 1];
+            }
+            else
+            {
+                CurrentPhoto = new Photo();
             }
         }
 
@@ -181,6 +189,38 @@ namespace PhotoAlbum.ViewModels
             {
                 CurrentLocation = Locations[Locations.Count - 1];
             }
+        }
+
+        private void EditLocation(Location location)
+        {
+            editLocationWindow.Location = location;
+            editLocationWindow.ShowDialog();
+        }
+
+        private void LoadPhoto()
+        {
+            if (dialogService.OpenFileDialog() == true)
+            {
+                var filename = Helper.CopyToImageDir(dialogService.File);
+                CurrentLocation.Photos.Add(new Photo { Path = filename });
+
+                SelectLastPhoto();
+            }
+        }
+
+        private void RemoveSelectedPhoto()
+        {
+            var res = dialogService.MessageBoxYesNo("Are you sure you want to delete this photo?", "Photo album");
+            if (res == DialogResult.Yes)
+            {
+                CurrentLocation.Photos.Remove(CurrentPhoto);
+                SelectLastPhoto();
+            }
+        }
+
+        private bool RemoveSelectedPhotoCanExecute()
+        {
+            return CurrentLocation.Photos.Count > 0;
         }
 
         #region INotifyPropertyChanged

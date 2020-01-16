@@ -1,6 +1,4 @@
-﻿using PhotoAlbum.Services.DialogServices;
-using PhotoAlbum.Services.WindowService.LocationWindowService;
-using PhotoAlbum.ViewModels;
+﻿using PhotoAlbum.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +11,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PhotoAlbum
+namespace PhotoAlbum.Views
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для EditLocationWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class EditLocationWindow : Window
     {
-        public MainWindow()
+        public EditLocationWindow()
         {
             InitializeComponent();
-            DataContext = new AppViewModel(new DialogService(), new LocationWindowService());
         }
     }
 }
