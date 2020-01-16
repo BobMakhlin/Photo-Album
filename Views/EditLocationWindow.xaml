@@ -12,8 +12,8 @@
             <ColumnDefinition Width="3.5*"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-            <Label FontSize="24">Name:</Label>
-            <Label FontSize="24" Margin="0,3,0,0">Date:</Label>
+            <Label FontSize="24" Content="Name:"/>
+            <Label FontSize="24" Margin="0,3,0,0" Content="Date:"/>
         </StackPanel>
         <StackPanel Grid.Column="1">
             <TextBox FontSize="24" Margin="3,6,3,0" Text="{Binding Path=Location.Name, Mode=TwoWay}"/>

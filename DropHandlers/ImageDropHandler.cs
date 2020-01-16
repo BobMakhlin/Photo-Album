@@ -35,6 +35,9 @@ namespace PhotoAlbum.DropHandlers
                 var files = obj.GetFileDropList();
                 foreach (var file in files)
                 {
+                    if (!FileFormat.IsImage(file))
+                        return;
+
                     var resFile = Helper.CopyToImageDir(file);
                     viewModel.CurrentLocation.Photos.Add(new Photo { Path = resFile });
                 }

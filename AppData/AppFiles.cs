@@ -10,6 +10,7 @@ namespace PhotoAlbum.AppData
     {
         public static string StandartImagesPath => "Images\\Standart";
         public static string CustomImagesPath => "Images\\Custom";
+        public static string IconsPath => "Images\\Icons";
         public static string ImagesPath => "images.bin";
     }
 }

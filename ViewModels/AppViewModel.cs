@@ -6,6 +6,7 @@ using PhotoAlbum.DropHandlers;
 using PhotoAlbum.Helpers;
 using PhotoAlbum.Models;
 using PhotoAlbum.Services.DialogServices;
+using PhotoAlbum.Services.WindowService;
 using PhotoAlbum.Services.WindowService.LocationWindowService;
 using System;
 using System.Collections.Generic;
@@ -26,13 +27,15 @@ namespace PhotoAlbum.ViewModels
         private Location currentLocation;
         IDialogService dialogService;
         ILocationWindowService editLocationWindow;
+        IWindowService paramsWindowService;
         #endregion
 
-        public AppViewModel(IDialogService dialogService, ILocationWindowService locationWindow)
+        public AppViewModel(IDialogService dialogService, ILocationWindowService locationWindow, IWindowService paramsWndService)
         {
             InitCommands();
             this.dialogService = dialogService;
             editLocationWindow = locationWindow;
+            paramsWindowService = paramsWndService;
             ImageDropHandler = new ImageDropHandler(this);
 
             LocationChanged += OnLocationChanged;
@@ -43,7 +46,7 @@ namespace PhotoAlbum.ViewModels
             }
             catch (Exception)
             {
-                Locations = PhotoStorage.GetLocations();
+                Locations = LocationsStorage.GetLocations();
             }
 
             if (Locations.Count > 0)
@@ -84,6 +87,7 @@ namespace PhotoAlbum.ViewModels
         public ICommand CommandEditLocation { get; private set; }
         public ICommand CommandAddPhoto { get; private set; }
         public ICommand CommandRemovePhoto { get; private set; }
+        public ICommand CommandOpenSettingsWindow { get; private set; }
 
         void InitCommands()
         {
@@ -95,6 +99,7 @@ namespace PhotoAlbum.ViewModels
             CommandEditLocation = new RelayCommand<Location>(EditLocation);
             CommandAddPhoto = new RelayCommand(LoadPhoto);
             CommandRemovePhoto = new RelayCommand(RemoveSelectedPhoto, RemoveSelectedPhotoCanExecute);
+            CommandOpenSettingsWindow = new RelayCommand(OpenSettingsWindow);
         }
 
         private void OnProgramClosing()
@@ -201,6 +206,9 @@ namespace PhotoAlbum.ViewModels
         {
             if (dialogService.OpenFileDialog() == true)
             {
+                if (!FileFormat.IsImage(dialogService.File))
+                    return;
+
                 var filename = Helper.CopyToImageDir(dialogService.File);
                 CurrentLocation.Photos.Add(new Photo { Path = filename });
 
@@ -223,12 +231,18 @@ namespace PhotoAlbum.ViewModels
             return CurrentLocation.Photos.Count > 0;
         }
 
+        private void OpenSettingsWindow()
+        {
+            paramsWindowService.ShowDialog();
+        }
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         void INotifyPropertyChanged([CallerMemberName] string prop = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
         #endregion
     }
